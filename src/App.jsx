@@ -15,7 +15,6 @@ const locations = {
   'Rektorat': { x: 550, y: 480, id: 'rk' }
 };
 
-// Graph dengan jarak antar lokasi - SUDAH DIPERBAIKI
 const graph = {
   'gb': { 'ps': 150, 'kt': 250, 'gu': 200 },
   'ps': { 'gb': 150, 'kt': 150, 'fk': 200 },
@@ -30,7 +29,6 @@ const graph = {
   'rk': { 'gu': 220, 'fpik': 250 }
 };
 
-// Algoritma Dijkstra
 function dijkstra(graph, start, end) {
   const distances = {};
   const previous = {};
@@ -122,20 +120,53 @@ export default function CampusNavigator() {
       }
     }
 
-    // Draw route
+    // Draw route DENGAN LABEL JARAK
     if (result && result.path.length > 1) {
       ctx.strokeStyle = '#3b82f6';
       ctx.lineWidth = 4 * scale;
       ctx.setLineDash([10 * scale, 5 * scale]);
       
       for (let i = 0; i < result.path.length - 1; i++) {
-        const fromLoc = Object.values(locations).find(l => l.id === result.path[i]);
-        const toLoc = Object.values(locations).find(l => l.id === result.path[i + 1]);
+        const fromId = result.path[i];
+        const toId = result.path[i + 1];
+        const fromLoc = Object.values(locations).find(l => l.id === fromId);
+        const toLoc = Object.values(locations).find(l => l.id === toId);
         
+        // Gambar garis rute
         ctx.beginPath();
         ctx.moveTo(fromLoc.x * scale, fromLoc.y * scale);
         ctx.lineTo(toLoc.x * scale, toLoc.y * scale);
         ctx.stroke();
+        
+        // ===== BAGIAN INI YANG DITAMBAHKAN: Label Jarak =====
+        const midX = (fromLoc.x + toLoc.x) / 2 * scale;
+        const midY = (fromLoc.y + toLoc.y) / 2 * scale;
+        const distance = graph[fromId][toId];
+        
+        // Reset line dash untuk kotak
+        ctx.setLineDash([]);
+        
+        // Background putih untuk label
+        ctx.fillStyle = '#ffffff';
+        ctx.fillRect(midX - 20 * scale, midY - 12 * scale, 40 * scale, 24 * scale);
+        
+        // Border biru untuk label
+        ctx.strokeStyle = '#3b82f6';
+        ctx.lineWidth = 2 * scale;
+        ctx.strokeRect(midX - 20 * scale, midY - 12 * scale, 40 * scale, 24 * scale);
+        
+        // Teks jarak
+        ctx.fillStyle = '#1e40af';
+        ctx.font = `bold ${12 * scale}px sans-serif`;
+        ctx.textAlign = 'center';
+        ctx.textBaseline = 'middle';
+        ctx.fillText(`${distance}m`, midX, midY);
+        
+        // Reset untuk garis berikutnya
+        ctx.strokeStyle = '#3b82f6';
+        ctx.lineWidth = 4 * scale;
+        ctx.setLineDash([10 * scale, 5 * scale]);
+        // ===== AKHIR BAGIAN YANG DITAMBAHKAN =====
       }
       ctx.setLineDash([]);
     }
@@ -257,6 +288,14 @@ export default function CampusNavigator() {
               </div>
             )}
 
+            {result && result.distance === Infinity && (
+              <div style={styles.errorCard}>
+                <p style={styles.errorText}>
+                  ❌ Tidak ada jalur yang menghubungkan kedua lokasi!
+                </p>
+              </div>
+            )}
+
             {/* Legend */}
             <div style={styles.card}>
               <h3 style={styles.cardTitle}>Legenda</h3>
@@ -303,7 +342,6 @@ export default function CampusNavigator() {
     </div>
   );
 }
-
 const styles = {
   container: {
     minHeight: '100vh',
@@ -479,6 +517,18 @@ const styles = {
   },
   pathText: {
     fontWeight: '600',
+  },
+  errorCard: {
+    background: '#fee2e2',
+    border: '2px solid #fecaca',
+    borderRadius: '20px',
+    padding: '20px',
+  },
+  errorText: {
+    color: '#991b1b',
+    fontWeight: '600',
+    margin: 0,
+    textAlign: 'center',
   },
   legendList: {
     display: 'flex',
