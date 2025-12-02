@@ -296,7 +296,7 @@ export default function CampusNavigator() {
 
             {/* Legend */}
             <div style={styles.card}>
-              <h3 style={styles.cardTitle}>Legenda</h3>
+              <h3 style={styles.cardTitle}>Keterangan</h3>
               <div style={styles.legendList}>
                 <div style={styles.legendItem}>
                   <div style={{...styles.legendDot, backgroundColor: '#10b981'}}></div>
@@ -563,3 +563,4 @@ const styles = {
     borderRadius: '8px',
   },
 };
+
