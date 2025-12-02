@@ -240,7 +240,7 @@ export default function CampusNavigator() {
               </div>
             )}
                         <div style={styles.card}>
-              <h3 style={styles.cardTitle}>Legenda</h3>
+              <h3 style={styles.cardTitle}>Keterangan</h3>
               <div style={styles.legendList}>
                 <div style={styles.legendItem}><div style={{...styles.legendDot, backgroundColor: '#10b981'}}></div><span>Lokasi Awal</span></div>
                 <div style={styles.legendItem}><div style={{...styles.legendDot, backgroundColor: '#ef4444'}}></div><span>Lokasi Tujuan</span></div>
